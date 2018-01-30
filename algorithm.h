@@ -8,40 +8,36 @@ public:
   explicit Algorithm(IO & _io) :
   io(_io) {}
 
-  struct Szeregowy {
-    int id;
-    int wzrost;
-    int wiek;
-    Szeregowy(int _id, int _wzrost, int _wiek) :
-      id(_id),
-      wzrost(_wzrost),
-      wiek(_wiek)
-    {};
-    bool operator<(const Szeregowy & s) const
-    {
-      return this->wiek < s.wiek && this->wzrost < s.wzrost;
-    }
-    bool operator>(const Szeregowy & s) const
-    {
-      return this->wiek > s.wiek && this->wzrost > s.wzrost;
-    }
-  };
-
   void process() {
     auto liczbaTestow = io.readSingle();
     while (liczbaTestow--)
     {
       auto liczbaSzeregowych = io.readSingle();
-      auto dane = io.readLines(2, liczbaSzeregowych);
-      vector<Szeregowy> szeregowi;
-      szeregowi.reserve(liczbaSzeregowych);
-      for (unsigned i = 0; i < liczbaSzeregowych; i++)
-      {
-        szeregowi.emplace_back(i, dane[0][i], dane[1][i]);
-      }
+      auto kolejnosc1 = io.readLine(liczbaSzeregowych);
+      auto kolejnosc2 = io.readLine(liczbaSzeregowych);
 
       vector<vector<int>> szeregiWyjsciowe;
 
+      for (auto kolejnosc1element : kolejnosc1)
+      {
+        auto dodane = false;
+        for (auto& szereg : szeregiWyjsciowe)
+        {
+          auto czyMoznaDodac = all_of(szereg.begin(), szereg.end(),[&](const auto szeregowy){
+            return find(kolejnosc2.begin(), kolejnosc2.end(), szeregowy) < find(kolejnosc2.begin(), kolejnosc2.end(), kolejnosc1element);
+          });
+          if (czyMoznaDodac)
+          {
+            szereg.push_back(kolejnosc1element);
+            dodane = true;
+            break;
+          }
+        }
+        if(!dodane)
+        {
+          szeregiWyjsciowe.push_back({kolejnosc1element});
+        }
+      }
       io.writeSingle(szeregiWyjsciowe.size());
       io.os << endl;
       for (auto szereg : szeregiWyjsciowe)
