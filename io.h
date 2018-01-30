@@ -37,6 +37,18 @@ public:
   }
 
   template<typename T = int>
+  vector<vector<T>> readLines(unsigned numberOfLines, unsigned numberOfElements)
+  {
+    vector<vector<T>> output;
+    output.reserve(numberOfLines);
+    while (numberOfLines--)
+    {
+      output.push_back(readLine<T>(numberOfElements));
+    }
+    return output;
+  }
+
+  template<typename T = int>
 	vector<T> readLine(unsigned numberOfElements)
 	{
     vector<T> output;
