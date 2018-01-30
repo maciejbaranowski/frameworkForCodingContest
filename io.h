@@ -21,7 +21,15 @@ public:
     cerr << "** Problem: " << problemName << " testcase: " << testCase << " started" << endl;
     string fileNameBase{problemName+"."+testCase+"."};
     os.open(fileNameBase+"out");
+    if (!os.good())
+    {
+      cerr << "** WARNING! Could not open output file!";
+    }
     is.open(fileNameBase+"in");
+    if (!is.good())
+    {
+      cerr << "** WARNING! Could not open input file!";
+    }
   }
 
   ~IO()
