@@ -16,10 +16,12 @@ public:
     os.basic_ios<char>::rdbuf(cout.rdbuf());
   }
 
-  IO(string inputFileName, string outputFileName)
+  IO(string problemName, string testCase)
   {
-    os.open(outputFileName);
-    is.open(inputFileName);
+    cerr << "** Problem: " << problemName << " testcase: " << testCase << " started" << endl;
+    string fileNameBase{problemName+"."+testCase+"."};
+    os.open(fileNameBase+"out");
+    is.open(fileNameBase+"in");
   }
 
   ~IO()
@@ -86,16 +88,14 @@ vector<IO> buildIoControllers(int argc, char** argv)
     {
       for (auto i = 2u; i < argc; ++i)
       {
-        string fileNameBase{problemName+"."+argv[i]+"."};
-        result.emplace_back(fileNameBase+"in", fileNameBase+"out");
+        result.emplace_back(problemName, argv[i]);
       }
     }
     else
     {
       for (auto testCase : allTestCases)
       {
-        string fileNameBase{problemName+"."+testCase+"."};
-        result.emplace_back(fileNameBase+"in", fileNameBase+"out");
+        result.emplace_back(problemName, testCase);
       }
     }
   }
