@@ -1,14 +1,14 @@
 #include <iostream>
 #include "io.h"
+#include "algorithm.h"
 
 int main(int argc, char** argv)
 {
-  //example usage:
-  auto n = IO::readSingle();
-  auto someIntsAsVector = IO::readLine(n);
-  auto someFloatsAsVector = IO::readLine<float>(n);
-  IO::writeLine(someFloatsAsVector);
-  IO::writeLine(someIntsAsVector);
-  IO::writeSingle(n);
+  auto ios = buildIoControllers(argc, argv);
+  for (auto& io : ios)
+  {
+    auto a = Algorithm{io};
+    a.process();
+  }
 	return 0;
 }
