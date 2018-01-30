@@ -8,20 +8,26 @@ public:
   io(_io) {}
 
   void process() {
-    auto n = io.readSingle();
-    auto someIntsAsVector = io.readLine(n);
-    auto someFloatsAsVector = io.readLine<float>(n);
-    auto threeLinesAsVectors = io.readLines(3, n);
+    auto liczbaTestow = io.readSingle();
+    while (liczbaTestow--)
+    {
+      auto liczbaSzeregowych = io.readSingle();
+      auto kolejnoscWzrostu = io.readLine(liczbaSzeregowych);
+      auto kolejnoscWieku = io.readLine(liczbaSzeregowych);
 
-    // ALGORITHM CODE GOES HERE!
-    // if accessing stream directly seems more convenient than provided functions use:
-    // io.is >> input;
-    // io.os << output;
+      vector<vector<int>> szeregiWyjsciowe;
 
-    io.writeLine(someFloatsAsVector);
-    io.writeLine(someIntsAsVector);
-    io.writeLine(threeLinesAsVectors[1]);
-    io.writeSingle(n);
+      szeregiWyjsciowe.push_back(kolejnoscWieku);
+      szeregiWyjsciowe.push_back(kolejnoscWzrostu);
+
+      io.writeSingle(szeregiWyjsciowe.size());
+      io.os << endl;
+      for (auto szereg : szeregiWyjsciowe)
+      {
+        io.writeSingle(szereg.size());
+        io.writeLine(szereg);
+      }
+    }
   }
 
 private:
