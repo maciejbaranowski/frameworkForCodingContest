@@ -14,6 +14,9 @@ public:
     auto threeLinesAsVectors = io.readLines(3, n);
 
     // ALGORITHM CODE GOES HERE!
+    // if accessing stream directly seems more convenient than provided functions use:
+    // io.is >> input;
+    // io.os << output;
 
     io.writeLine(someFloatsAsVector);
     io.writeLine(someIntsAsVector);
