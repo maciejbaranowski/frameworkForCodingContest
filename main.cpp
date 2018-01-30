@@ -10,5 +10,5 @@ int main(int argc, char** argv)
     auto a = Algorithm{io};
     a.process();
   }
-	return 0;
+  return 0;
 }

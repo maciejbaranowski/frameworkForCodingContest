@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <type_traits>
 
 using namespace std;
 
@@ -57,8 +58,8 @@ public:
   }
 
   template<typename T = int>
-	vector<T> readLine(unsigned numberOfElements)
-	{
+  vector<T> readLine(unsigned numberOfElements)
+  {
     vector<T> output;
     output.reserve(numberOfElements);
     while (numberOfElements--)
@@ -66,15 +67,16 @@ public:
       output.push_back(readSingle<T>());
     }
     return output;
-	}
+  }
 
   template<typename T = int>
-	T readSingle()
-	{
+  T readSingle()
+  {
+    static_assert(is_fundamental<T>::value, "Wrong type provided");
     T value;
     is >> value;
     return value;
-	}
+  }
 
   template<typename T>
   void writeLine(const vector<T>& output)
@@ -89,6 +91,7 @@ public:
   template<typename T>
   void writeSingle(T output)
   {
+    static_assert(is_fundamental<T>::value, "Wrong type provided");
     os << output << " ";
   }
 
