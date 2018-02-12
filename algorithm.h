@@ -5,9 +5,12 @@
 
 class Algorithm {
 public:
-  explicit Algorithm(IO & _io) :
-  io(_io) {}
+  explicit Algorithm(IO && _io) :
+  io(std::move(_io)) {
+    process();
+  }
 
+private:
   void process() {
     auto n = io.readSingle();
     auto someIntsAsVector = io.readLine(n);
@@ -31,6 +34,5 @@ public:
     io.writeSingle(n);
   }
 
-private:
-  IO & io;
+  IO && io;
 };
