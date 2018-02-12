@@ -6,9 +6,12 @@
 
 class Algorithm {
 public:
-  explicit Algorithm(IO & _io) :
-  io(_io) {}
+  explicit Algorithm(IO && _io) :
+  io(std::move(_io)) {
+    process();
+  }
 
+private:
   void process() {
     auto liczbaTestow = io.readSingle();
     while (liczbaTestow--)
@@ -49,6 +52,5 @@ public:
     }
   }
 
-private:
-  IO & io;
+  IO && io;
 };

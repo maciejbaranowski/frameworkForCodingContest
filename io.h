@@ -39,12 +39,6 @@ public:
     is.close();
   }
 
-  IO(const IO& srcIo)
-  {
-    is.basic_ios<char>::rdbuf(srcIo.is.rdbuf());
-    os.basic_ios<char>::rdbuf(srcIo.os.rdbuf());
-  }
-
   template<typename T = int>
   vector<vector<T>> readLines(unsigned numberOfLines, unsigned numberOfElements)
   {
@@ -98,33 +92,3 @@ public:
   ifstream is;
   ofstream os;
 };
-
-const vector<string> allTestCases = {"01","02","03","04","05","06","07","08","09","10"};
-
-vector<IO> buildIoControllers(int argc, char** argv)
-{
-  vector<IO> result = {};
-  if (argc > 1)
-  {
-    string problemName{argv[1]};
-    if (argc > 2)
-    {
-      for (auto i = 2u; i < argc; ++i)
-      {
-        result.emplace_back(problemName, argv[i]);
-      }
-    }
-    else
-    {
-      for (auto testCase : allTestCases)
-      {
-        result.emplace_back(problemName, testCase);
-      }
-    }
-  }
-  else
-  {
-    result.emplace_back();
-  }
-  return result;
-}
