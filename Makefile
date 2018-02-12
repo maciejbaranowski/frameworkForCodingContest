@@ -1,2 +1,2 @@
-main: io.h algorithm.h main.cpp
-	g++ -std=c++14 -o main main.cpp
+main: io.h algorithm.h utils.h main.cpp
+	g++ -std=c++17 -o main main.cpp

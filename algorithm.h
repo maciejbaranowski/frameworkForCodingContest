@@ -2,6 +2,7 @@
 
 #include "io.h"
 #include <algorithm>
+#include "utils.h"
 
 class Algorithm {
 public:
