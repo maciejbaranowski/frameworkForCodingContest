@@ -7,4 +7,4 @@
   * `./main zadanie` for all testcases (by default from 01..10)
   * `./main zadanie xx yy zz` for specific testcases only
 
-Input files should be named: `zadanie.xx.in`
+Input files should be named: `zadanieXX.in`

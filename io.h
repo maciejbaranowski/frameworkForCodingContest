@@ -20,7 +20,7 @@ public:
   IO(string problemName, string testCase)
   {
     cerr << "** Problem: " << problemName << " testcase: " << testCase << " started" << endl;
-    string fileNameBase{problemName+"."+testCase+"."};
+    string fileNameBase{problemName+testCase+"."};
     os.open(fileNameBase+"out");
     if (!os.good())
     {
