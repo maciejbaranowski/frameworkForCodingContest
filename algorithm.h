@@ -12,21 +12,24 @@ public:
 
 private:
   void process() {
+    // ALGORITHM CODE GOES HERE!
+
     auto n = io.readSingle();
     auto someIntsAsVector = io.readLine(n);
     auto someFloatsAsVector = io.readLine<float>(n);
     auto threeLinesAsVectors = io.readLines(3, n);
 
-    // ALGORITHM CODE GOES HERE!
-    // if accessing stream directly seems more convenient than provided functions use:
-    // io.is >> input;
-    // io.os << output;
+
     time("Some operations" ,[&](){
-      for (int i = 0; i < 100; i++)
+      for (int i = 0; i < 10000; i++)
       {
-        io.os << i*i << endl;
+        n += i*i;
       }
     });
+
+    int someIntegerAccessedDirectly, anotherInteger;
+    io >> someIntegerAccessedDirectly >> anotherInteger;
+    io << anotherInteger << " " << someIntegerAccessedDirectly;
 
     io.writeLine(someFloatsAsVector);
     io.writeLine(someIntsAsVector);

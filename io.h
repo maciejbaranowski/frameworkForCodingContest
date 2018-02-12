@@ -89,6 +89,21 @@ public:
     os << output << " ";
   }
 
+  template<typename T>
+  IO& operator<<(const T & output)
+  {
+    os << output;
+    return *this;
+  }
+
+  template<typename T>
+  IO& operator>>(T & input)
+  {
+    is >> input;
+    return *this;
+  }
+
+private:
   ifstream is;
   ofstream os;
 };
