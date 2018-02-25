@@ -21,7 +21,7 @@ public:
   {
     cerr << "** Problem: " << problemName << " testcase: " << testCase << " started" << endl;
     string fileNameBase{problemName+testCase+"."};
-    os.open(fileNameBase+"out");
+    os.open(fileNameBase+"ans");
     if (!os.good())
     {
       cerr << "** WARNING! Could not open output file!";
