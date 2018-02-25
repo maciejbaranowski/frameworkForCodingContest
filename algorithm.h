@@ -87,30 +87,36 @@ private:
     const vector<Biuro> & biura,
     const Material & material)
   {
-    for (auto wynajecie : wynajeciaBiur)
+    int limit = 10000; //zbyt nieefektywne, zeby szukac wszystkiego w niektorych testcaseach
+    for (const auto wynajecie : wynajeciaBiur)
     {
+      limit--;
+      if (limit < 0)
+      {
+        break;
+      }
       Biuro biuro = *std::find_if(
         biura.begin(),
         biura.end(),
         [=] (const auto b) {
           return b.id == wynajecie.id;
         });
-      if (std::find(
-        biuro.jezyki.cbegin(),
-        biuro.jezyki.cend(),
-        material.jezykDocelowy) != biuro.jezyki.end()
-        and
-        std::find(
-        biuro.jezyki.cbegin(),
-        biuro.jezyki.cend(),
-        material.jezykZrodlowy) != biuro.jezyki.end()
-        )
+      auto biuroDostepneOd = max(wynajecie.czas, material.momentUzyskania);
+      auto biuroDostepneDo = min(wynajecie.czas + biuro.czasWynajecia, material.momentStraty);
+      if (biuroDostepneDo < biuroDostepneOd)
+        continue;
+      if (material.kosztCzasu < biuroDostepneDo - biuroDostepneOd)
       {
-        auto biuroDostepneOd = max(wynajecie.czas, material.momentUzyskania);
-        auto biuroDostepneDo = min(wynajecie.czas + biuro.czasWynajecia, material.momentStraty);
-        if (biuroDostepneDo < biuroDostepneOd)
-          continue;
-        if (material.kosztCzasu < biuroDostepneDo - biuroDostepneOd)
+        if (std::find(
+          biuro.jezyki.cbegin(),
+          biuro.jezyki.cend(),
+          material.jezykDocelowy) != biuro.jezyki.end()
+          and
+          std::find(
+          biuro.jezyki.cbegin(),
+          biuro.jezyki.cend(),
+          material.jezykZrodlowy) != biuro.jezyki.end()
+          )
         {
           return {true,{
             material.id,
@@ -128,7 +134,6 @@ private:
     auto T = io.readSingle();
     while (T-->0)
     {
-      cerr << "TESTCASES LEFT: " << T;
       auto liczbaBiur = io.readSingle<unsigned>();
       auto liczbaMaterialow = io.readSingle<unsigned>();
       vector<Biuro> biura;
@@ -171,9 +176,15 @@ private:
           continue;
         }
 
+
         auto optBiuro = znajdzNajtanszeBiuro(biura, material);
         if (std::get<0>(optBiuro))
         {
+          if (std::get<1>(optBiuro).cenaWynajecia*std::get<2>(optBiuro)
+            > material.nagroda)
+            continue;
+          if (wynajeciaBiur.size() + (std::get<2>(optBiuro) > 10000)
+            break;
           suma -= std::get<1>(optBiuro).cenaWynajecia*std::get<2>(optBiuro);
           while ((std::get<2>(optBiuro)--)>0)
           {
