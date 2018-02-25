@@ -41,46 +41,94 @@ private:
     unsigned id;
     unsigned czas;
   };
-  std::pair<bool, Biuro> znajdzNajtanszeBiuro(
+  std::tuple<bool, Biuro, unsigned> znajdzNajtanszeBiuro(
     const vector<Biuro> & biura,
     const Material & material)
   {
     auto najniszaCena = numeric_limits<unsigned>::max();
     auto najtanszeBiuro = biura[0];
+    auto ileRazyNajtansze = 0u;
     for (auto biuro : biura)
     {
-      if (biuro.czasWynajecia > material.kosztCzasu and
-        biuro.czasWynajecia > material.momentStraty - material.momentUzyskania)
+      if (std::find(
+        biuro.jezyki.cbegin(),
+        biuro.jezyki.cend(),
+        material.jezykDocelowy) != biuro.jezyki.end()
+        and
+        std::find(
+        biuro.jezyki.cbegin(),
+        biuro.jezyki.cend(),
+        material.jezykZrodlowy) != biuro.jezyki.end()
+        )
       {
-        if (std::find(
-          biuro.jezyki.cbegin(),
-          biuro.jezyki.cend(),
-          material.jezykDocelowy) != biuro.jezyki.end()
-          and
-          std::find(
-          biuro.jezyki.cbegin(),
-          biuro.jezyki.cend(),
-          material.jezykZrodlowy) != biuro.jezyki.end()
-          )
+        unsigned teBiuroTrzebabyWynajacIleRazy =
+          material.kosztCzasu / biuro.czasWynajecia + 1;
+        unsigned prawdziwyKosztTlumaczenia =
+          biuro.cenaWynajecia * teBiuroTrzebabyWynajacIleRazy;
         {
-          if (biuro.cenaWynajecia < najniszaCena)
+          if (prawdziwyKosztTlumaczenia < najniszaCena)
           {
-            najniszaCena = biuro.cenaWynajecia;
+            najniszaCena = prawdziwyKosztTlumaczenia;
             najtanszeBiuro = biuro;
+            ileRazyNajtansze = teBiuroTrzebabyWynajacIleRazy;
           }
         }
       }
     }
     if (najniszaCena != numeric_limits<unsigned>::max())
     {
-      return {true, najtanszeBiuro};
+      return {true, najtanszeBiuro, ileRazyNajtansze};
+    }
+    return {false,{}, 0u};
+  }
+
+  pair<bool, UkonczoneTlumaczenie> saDobreBiuraDlaMaterialu(
+    const vector<WynajecieBiura> & wynajeciaBiur,
+    const vector<Biuro> & biura,
+    const Material & material)
+  {
+    for (auto wynajecie : wynajeciaBiur)
+    {
+      Biuro biuro = *std::find_if(
+        biura.begin(),
+        biura.end(),
+        [=] (const auto b) {
+          return b.id == wynajecie.id;
+        });
+      if (std::find(
+        biuro.jezyki.cbegin(),
+        biuro.jezyki.cend(),
+        material.jezykDocelowy) != biuro.jezyki.end()
+        and
+        std::find(
+        biuro.jezyki.cbegin(),
+        biuro.jezyki.cend(),
+        material.jezykZrodlowy) != biuro.jezyki.end()
+        )
+      {
+        auto biuroDostepneOd = max(wynajecie.czas, material.momentUzyskania);
+        auto biuroDostepneDo = min(wynajecie.czas + biuro.czasWynajecia, material.momentStraty);
+        if (biuroDostepneDo < biuroDostepneOd)
+          continue;
+        if (material.kosztCzasu < biuroDostepneDo - biuroDostepneOd)
+        {
+          return {true,{
+            material.id,
+            {
+              {biuroDostepneOd, biuro.id, material.jezykDocelowy}
+            }
+          }};
+        }
+      }
     }
     return {false,{}};
   }
+
   void process() {
     auto T = io.readSingle();
     while (T-->0)
     {
+      cerr << "TESTCASES LEFT: " << T;
       auto liczbaBiur = io.readSingle<unsigned>();
       auto liczbaMaterialow = io.readSingle<unsigned>();
       vector<Biuro> biura;
@@ -113,20 +161,33 @@ private:
 
       for (auto material : materialy)
       {
-        auto optBiuro = znajdzNajtanszeBiuro(biura, material);
-        if (optBiuro.first)
+
+        auto idBiuraDlaMaterialu =
+          saDobreBiuraDlaMaterialu(wynajeciaBiur, biura, material);
+        if (idBiuraDlaMaterialu.first)
         {
-          wynajeciaBiur.push_back({
-            optBiuro.second.id,
-            material.momentUzyskania});
-          suma -= optBiuro.second.cenaWynajecia;
+          suma += material.nagroda;
+          ukonczoneTlumaczenia.push_back(idBiuraDlaMaterialu.second);
+          continue;
+        }
+
+        auto optBiuro = znajdzNajtanszeBiuro(biura, material);
+        if (std::get<0>(optBiuro))
+        {
+          suma -= std::get<1>(optBiuro).cenaWynajecia*std::get<2>(optBiuro);
+          while ((std::get<2>(optBiuro)--)>0)
+          {
+            wynajeciaBiur.push_back({
+              std::get<1>(optBiuro).id,
+              material.momentUzyskania + std::get<1>(optBiuro).czasWynajecia*std::get<2>(optBiuro)});
+          }
           suma += material.nagroda;
           ukonczoneTlumaczenia.push_back({
             material.id,
             {
               {
                 material.momentUzyskania,
-                optBiuro.second.id,
+                std::get<1>(optBiuro).id,
                 material.jezykDocelowy
               }
             }
